@@ -11,7 +11,7 @@ variable	y equal 10
 variable	z equal 20
 
 variable	rho equal 0.6
-variable        t equal 1.35
+variable        t equal 1.351
 variable	rc equal 2.5
 
 #variable	rho equal 0.85
@@ -38,7 +38,7 @@ Created 8000 atoms
 mass		1 1.0
 
 velocity	all create $t 87287
-velocity	all create 1.35 87287
+velocity	all create 1.351 87287
 
 pair_style	lj/cut ${rc}
 pair_style	lj/cut 2.5
@@ -50,8 +50,8 @@ neigh_modify	delay 0 every 1
 # 1st equilibration run
 
 fix		1 all nvt temp $t $t 0.5
-fix		1 all nvt temp 1.35 $t 0.5
-fix		1 all nvt temp 1.35 1.35 0.5
+fix		1 all nvt temp 1.351 $t 0.5
+fix		1 all nvt temp 1.351 1.351 0.5
 thermo		100
 run		1000
 Neighbor list info ...
@@ -63,46 +63,46 @@ Neighbor list info ...
   binsize = 1.4 -> bins = 14 14 27
 Memory usage per processor = 2.7013 Mbytes
 Step Temp E_pair E_mol TotEng Press 
-       0         1.35   -4.1241917            0   -2.0994448   -3.1961613 
-     100    1.1872068    -3.770585            0   -1.9899974   0.50876678 
-     200    1.2623273   -3.7436709            0   -1.8504166   0.64576172 
-     300    1.3232893   -3.7100115            0   -1.7253256   0.77952968 
-     400     1.376056   -3.7037794            0   -1.6399534   0.84369178 
-     500    1.3804885   -3.6952486            0   -1.6247747   0.86182223 
-     600    1.3466801   -3.7003367            0    -1.680569   0.85207011 
-     700    1.3135776   -3.6912719            0   -1.7211517   0.87163831 
-     800    1.3301143    -3.696371            0    -1.701449   0.85570562 
-     900    1.3746192   -3.7187037            0   -1.6570325   0.85271251 
-    1000     1.366021   -3.7049251            0   -1.6561498   0.89219694 
-Loop time of 6.08537 on 1 procs for 1000 steps with 8000 atoms
+       0        1.351   -4.1241917            0    -2.097945   -3.1955613 
+     100    1.1880039   -3.7702096            0   -1.9884265   0.51055296 
+     200    1.2631668   -3.7431975            0   -1.8486841   0.64790342 
+     300    1.3231063   -3.7080102            0   -1.7235987   0.78631223 
+     400    1.3681979   -3.6906306            0   -1.6385902   0.88493929 
+     500    1.3780846   -3.6900102            0   -1.6231416   0.88705853 
+     600    1.3533869   -3.7065879            0   -1.6767613   0.85340163 
+     700     1.329744   -3.7106702            0   -1.7163035   0.78329491 
+     800    1.3538966   -3.7297371            0   -1.6991461   0.73130394 
+     900    1.3615796   -3.7026207            0   -1.6605065   0.85719439 
+    1000    1.3533979   -3.6871471            0    -1.657304   0.90137291 
+Loop time of 6.1856 on 1 procs for 1000 steps with 8000 atoms
 
-Performance: 70989.967 tau/day, 164.329 timesteps/s
-99.4% CPU use with 1 MPI tasks x 1 OpenMP threads
+Performance: 69839.592 tau/day, 161.666 timesteps/s
+98.3% CPU use with 1 MPI tasks x 1 OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 3.8094     | 3.8094     | 3.8094     |   0.0 | 62.60
-Neigh   | 1.896      | 1.896      | 1.896      |   0.0 | 31.16
-Comm    | 0.096761   | 0.096761   | 0.096761   |   0.0 |  1.59
-Output  | 0          | 0          | 0          |   0.0 |  0.00
-Modify  | 0.15826    | 0.15826    | 0.15826    |   0.0 |  2.60
-Other   |            | 0.125      |            |       |  2.05
+Pair    | 3.9637     | 3.9637     | 3.9637     |   0.0 | 64.08
+Neigh   | 1.8223     | 1.8223     | 1.8223     |   0.0 | 29.46
+Comm    | 0.081631   | 0.081631   | 0.081631   |   0.0 |  1.32
+Output  | 0.015625   | 0.015625   | 0.015625   |   0.0 |  0.25
+Modify  | 0.16026    | 0.16026    | 0.16026    |   0.0 |  2.59
+Other   |            | 0.1421     |            |       |  2.30
 
 Nlocal:    8000 ave 8000 max 8000 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:    7441 ave 7441 max 7441 min
+Nghost:    7406 ave 7406 max 7406 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-Neighs:    217087 ave 217087 max 217087 min
+Neighs:    217042 ave 217042 max 217042 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 
-Total # of neighbors = 217087
-Ave neighs/atom = 27.1359
-Neighbor list builds = 160
+Total # of neighbors = 217042
+Ave neighs/atom = 27.1303
+Neighbor list builds = 161
 Dangerous builds = 0
 
 velocity	all scale $t
-velocity	all scale 1.35
+velocity	all scale 1.351
 
 unfix		1
 
@@ -125,9 +125,5 @@ thermo		1000
 run		20000
 Memory usage per processor = 2.96484 Mbytes
 Step Temp E_pair TotEng f_3 v_tdiff 
-    1000         1.35   -3.7049251   -1.6801782            0            0 
-    2000    1.3543365   -3.7117548    -1.680504    909.33042   0.21502689 
-    3000    1.3653964   -3.7293011   -1.6814625    1786.9685   0.39563558 
-    4000    1.3676151   -3.7334439   -1.6822777    2640.0753   0.58611516 
-    5000    1.3814481   -3.7563791   -1.6844661    3479.3859   0.69796348 
-    6000    1.3805397   -3.7553341   -1.6847834    4272.3134   0.77885796 
+    1000        1.351   -3.6871471   -1.6609004            0            0 
+    2000    1.3672344   -3.7120804   -1.6614851    891.09408   0.30047751 

@@ -1,0 +1,65 @@
+LAMMPS (27 Aug 2016-ICMS)
+WARNING: OMP_NUM_THREADS environment is not set. Defaulting to 1 thread. (../comm.cpp:90)
+  using 1 OpenMP thread(s) per MPI task
+Lattice spacing in x,y,z = 1.88207 1.88207 1.88207
+Created orthogonal box = (0 0 0) to (18.8207 18.8207 37.6414)
+  1 by 1 by 1 MPI processor grid
+Created 8000 atoms
+Neighbor list info ...
+  1 neighbor list requests
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 2.8
+  ghost atom cutoff = 2.8
+  binsize = 1.4, bins = 14 14 27
+Setting up Verlet run ...
+  Unit style    : lj
+  Current step  : 0
+  Time step     : 0.005
+Memory usage per processor = 2.7013 Mbytes
+Step Temp E_pair E_mol TotEng Press 
+       0        1.351   -4.1241917            0    -2.097945   -3.1955613 
+     100    1.1880039   -3.7702096            0   -1.9884265   0.51055296 
+     200    1.2631668   -3.7431975            0   -1.8486841   0.64790342 
+     300    1.3231063   -3.7080102            0   -1.7235987   0.78631223 
+     400    1.3681979   -3.6906306            0   -1.6385902   0.88493929 
+     500    1.3780846   -3.6900102            0   -1.6231416   0.88705853 
+     600    1.3533869   -3.7065879            0   -1.6767613   0.85340163 
+     700     1.329744   -3.7106702            0   -1.7163035   0.78329491 
+     800    1.3538966   -3.7297371            0   -1.6991461   0.73130394 
+     900    1.3615796   -3.7026207            0   -1.6605065   0.85719439 
+    1000    1.3533979   -3.6871471            0    -1.657304   0.90137291 
+Loop time of 6.1856 on 1 procs for 1000 steps with 8000 atoms
+
+Performance: 69839.592 tau/day, 161.666 timesteps/s
+98.3% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.9637     | 3.9637     | 3.9637     |   0.0 | 64.08
+Neigh   | 1.8223     | 1.8223     | 1.8223     |   0.0 | 29.46
+Comm    | 0.081631   | 0.081631   | 0.081631   |   0.0 |  1.32
+Output  | 0.015625   | 0.015625   | 0.015625   |   0.0 |  0.25
+Modify  | 0.16026    | 0.16026    | 0.16026    |   0.0 |  2.59
+Other   |            | 0.1421     |            |       |  2.30
+
+Nlocal:    8000 ave 8000 max 8000 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7406 ave 7406 max 7406 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    217042 ave 217042 max 217042 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 217042
+Ave neighs/atom = 27.1303
+Neighbor list builds = 161
+Dangerous builds = 0
+Setting up Verlet run ...
+  Unit style    : lj
+  Current step  : 1000
+  Time step     : 0.005
+Memory usage per processor = 2.96484 Mbytes
+Step Temp E_pair TotEng f_3 v_tdiff 
+    1000        1.351   -3.6871471   -1.6609004            0            0 
+    2000    1.3672344   -3.7120804   -1.6614851    891.09408   0.30047751 

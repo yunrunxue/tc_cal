@@ -1,66 +1,21 @@
 LAMMPS (27 Aug 2016-ICMS)
 WARNING: OMP_NUM_THREADS environment is not set. Defaulting to 1 thread. (../comm.cpp:90)
   using 1 OpenMP thread(s) per MPI task
-# sample LAMMPS input script for thermal conductivity of liquid LJ
-# Muller-Plathe method via fix thermal_conductivity
-
-# settings
-
-variable	x equal 10
-variable	y equal 10
-variable	z equal 20
-
-variable	rho equal 0.6
-variable        t equal 1.35
-variable	rc equal 2.5
-
-#variable	rho equal 0.85
-#variable        t equal 0.7
-#variable	rc equal 3.0
-
-# setup problem
-
-units		lj
-atom_style	atomic
-
-lattice		fcc ${rho}
-lattice		fcc 0.6
 Lattice spacing in x,y,z = 1.88207 1.88207 1.88207
-region		box block 0 $x 0 $y 0 $z
-region		box block 0 10 0 $y 0 $z
-region		box block 0 10 0 10 0 $z
-region		box block 0 10 0 10 0 20
-create_box	1 box
 Created orthogonal box = (0 0 0) to (18.8207 18.8207 37.6414)
   1 by 1 by 1 MPI processor grid
-create_atoms	1 box
 Created 8000 atoms
-mass		1 1.0
-
-velocity	all create $t 87287
-velocity	all create 1.35 87287
-
-pair_style	lj/cut ${rc}
-pair_style	lj/cut 2.5
-pair_coeff	1 1 1.0 1.0
-
-neighbor	0.3 bin
-neigh_modify	delay 0 every 1
-
-# 1st equilibration run
-
-fix		1 all nvt temp $t $t 0.5
-fix		1 all nvt temp 1.35 $t 0.5
-fix		1 all nvt temp 1.35 1.35 0.5
-thermo		100
-run		1000
 Neighbor list info ...
   1 neighbor list requests
   update every 1 steps, delay 0 steps, check yes
   max neighbors/atom: 2000, page size: 100000
   master list distance cutoff = 2.8
   ghost atom cutoff = 2.8
-  binsize = 1.4 -> bins = 14 14 27
+  binsize = 1.4, bins = 14 14 27
+Setting up Verlet run ...
+  Unit style    : lj
+  Current step  : 0
+  Time step     : 0.005
 Memory usage per processor = 2.7013 Mbytes
 Step Temp E_pair E_mol TotEng Press 
        0         1.35   -4.1241917            0   -2.0994448   -3.1961613 
@@ -100,29 +55,10 @@ Total # of neighbors = 217087
 Ave neighs/atom = 27.1359
 Neighbor list builds = 160
 Dangerous builds = 0
-
-velocity	all scale $t
-velocity	all scale 1.35
-
-unfix		1
-
-# 2nd equilibration run
-
-compute		ke all ke/atom
-variable	temp atom c_ke/1.5
-
-fix		1 all nve
-
-compute         layers all chunk/atom bin/1d z lower 0.05 units reduced
-fix		2 all ave/chunk 10 100 1000 layers v_temp file profile.mp
-
-fix		3 all thermal/conductivity 10 z 20
-
-variable        tdiff equal f_2[11][3]-f_2[1][3]
-thermo_style	custom step temp epair etotal f_3 v_tdiff
-
-thermo		1000
-run		20000
+Setting up Verlet run ...
+  Unit style    : lj
+  Current step  : 1000
+  Time step     : 0.005
 Memory usage per processor = 2.96484 Mbytes
 Step Temp E_pair TotEng f_3 v_tdiff 
     1000         1.35   -3.7049251   -1.6801782            0            0 

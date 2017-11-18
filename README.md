@@ -4,7 +4,7 @@ Thermal concudctivity related researches of Argon
 
 > @Authour Run-Xue Yu
 
-> @Mail  @fudan.edu.cn
+> @Mail  14307110376@fudan.edu.cn
 
 > @Fudan University Computational Condensed Matter Group(CCMG)
 
@@ -14,4 +14,4 @@ Thermal concudctivity related researches of Argon
 
 - This is the code for the homework of **Computational Physical Experiments** course.
 
-- Thermal conductivity of Argon is studied with three methods , which is **Muller-Plathe**,** Langivin ** ,** Green-Kubo**.
+- Thermal conductivity of Argon is studied with three methods , which is **Muller-Plathe**,**Langivin ** ,**Green-Kubo**.

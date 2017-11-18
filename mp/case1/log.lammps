@@ -1,0 +1,234 @@
+LAMMPS (27 Aug 2016-ICMS)
+WARNING: OMP_NUM_THREADS environment is not set. Defaulting to 1 thread. (../comm.cpp:90)
+  using 1 OpenMP thread(s) per MPI task
+# sample LAMMPS input script for thermal conductivity of liquid LJ
+# Muller-Plathe method via fix thermal_conductivity
+
+# settings
+
+variable	x equal 10
+variable	y equal 10
+variable	z equal 20
+
+variable	rho equal 0.6
+variable        t equal 1.35
+variable	rc equal 2.5
+
+#variable	rho equal 0.85
+#variable        t equal 0.7
+#variable	rc equal 3.0
+
+# setup problem
+
+units		lj
+atom_style	atomic
+
+lattice		fcc ${rho}
+lattice		fcc 0.6
+Lattice spacing in x,y,z = 1.88207 1.88207 1.88207
+region		box block 0 $x 0 $y 0 $z
+region		box block 0 10 0 $y 0 $z
+region		box block 0 10 0 10 0 $z
+region		box block 0 10 0 10 0 20
+create_box	1 box
+Created orthogonal box = (0 0 0) to (18.8207 18.8207 37.6414)
+  1 by 1 by 1 MPI processor grid
+create_atoms	1 box
+Created 8000 atoms
+mass		1 1.0
+
+velocity	all create $t 87287
+velocity	all create 1.35 87287
+
+pair_style	lj/cut ${rc}
+pair_style	lj/cut 2.5
+pair_coeff	1 1 1.0 1.0
+
+neighbor	0.3 bin
+neigh_modify	delay 0 every 1
+
+# 1st equilibration run
+
+fix		1 all nvt temp $t $t 0.5
+fix		1 all nvt temp 1.35 $t 0.5
+fix		1 all nvt temp 1.35 1.35 0.5
+thermo		100
+run		1000
+Neighbor list info ...
+  1 neighbor list requests
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 2.8
+  ghost atom cutoff = 2.8
+  binsize = 1.4 -> bins = 14 14 27
+Memory usage per processor = 2.7013 Mbytes
+Step Temp E_pair E_mol TotEng Press 
+       0         1.35   -4.1241917            0   -2.0994448   -3.1961613 
+     100    1.1872068    -3.770585            0   -1.9899974   0.50876678 
+     200    1.2623273   -3.7436709            0   -1.8504166   0.64576172 
+     300    1.3232893   -3.7100115            0   -1.7253256   0.77952968 
+     400     1.376056   -3.7037794            0   -1.6399534   0.84369178 
+     500    1.3804885   -3.6952486            0   -1.6247747   0.86182223 
+     600    1.3466801   -3.7003367            0    -1.680569   0.85207011 
+     700    1.3135776   -3.6912719            0   -1.7211517   0.87163831 
+     800    1.3301143    -3.696371            0    -1.701449   0.85570562 
+     900    1.3746192   -3.7187037            0   -1.6570325   0.85271251 
+    1000     1.366021   -3.7049251            0   -1.6561498   0.89219694 
+Loop time of 5.88137 on 1 procs for 1000 steps with 8000 atoms
+
+Performance: 73452.246 tau/day, 170.028 timesteps/s
+99.9% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 3.8983     | 3.8983     | 3.8983     |   0.0 | 66.28
+Neigh   | 1.7772     | 1.7772     | 1.7772     |   0.0 | 30.22
+Comm    | 0.03725    | 0.03725    | 0.03725    |   0.0 |  0.63
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0.13501    | 0.13501    | 0.13501    |   0.0 |  2.30
+Other   |            | 0.03362    |            |       |  0.57
+
+Nlocal:    8000 ave 8000 max 8000 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7441 ave 7441 max 7441 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    217087 ave 217087 max 217087 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 217087
+Ave neighs/atom = 27.1359
+Neighbor list builds = 160
+Dangerous builds = 0
+
+velocity	all scale $t
+velocity	all scale 1.35
+
+unfix		1
+
+# 2nd equilibration run
+
+compute		ke all ke/atom
+variable	temp atom c_ke/1.5
+
+fix		1 all nve
+
+compute         layers all chunk/atom bin/1d z lower 0.05 units reduced
+fix		2 all ave/chunk 10 100 1000 layers v_temp file profile.mp
+
+fix		3 all thermal/conductivity 10 z 20
+
+variable        tdiff equal f_2[11][3]-f_2[1][3]
+thermo_style	custom step temp epair etotal f_3 v_tdiff
+
+thermo		1000
+run		20000
+Memory usage per processor = 2.96484 Mbytes
+Step Temp E_pair TotEng f_3 v_tdiff 
+    1000         1.35   -3.7049251   -1.6801782            0            0 
+    2000    1.3543365   -3.7117548    -1.680504    909.33042   0.21502689 
+    3000    1.3653964   -3.7293011   -1.6814625    1786.9685   0.39563558 
+    4000    1.3676151   -3.7334439   -1.6822777    2640.0753   0.58611516 
+    5000    1.3814481   -3.7563791   -1.6844661    3479.3859   0.69796348 
+    6000    1.3805397   -3.7553341   -1.6847834    4272.3134   0.77885796 
+    7000    1.4029634   -3.7902472   -1.6860653    5081.3055   0.83962122 
+    8000    1.4025264   -3.7900795   -1.6865529    5856.4298    1.0066471 
+    9000    1.3931086    -3.776169   -1.6867674     6649.189   0.98571219 
+   10000    1.4062061   -3.7973032   -1.6882576    7429.3604    1.0904606 
+   11000    1.4033516   -3.7928235   -1.6880593    8202.5429    1.0171609 
+   12000    1.4023513   -3.7914848   -1.6882208    8947.0902    1.1119731 
+   13000    1.4095834   -3.8024668    -1.688356    9724.9885    1.0237369 
+   14000    1.4220245   -3.8226882   -1.6899181    10480.908    1.1829898 
+   15000    1.4017281   -3.7909361   -1.6886068    11231.244    1.2347887 
+   16000    1.4225396   -3.8234147    -1.689872     11982.94    1.1653604 
+   17000    1.4267932   -3.8299072   -1.6899849     12724.14    1.2461623 
+   18000    1.4189359   -3.8187382   -1.6906004     13517.96    1.1575224 
+   19000    1.4171149   -3.8157456    -1.690339    14270.677    1.3016071 
+   20000    1.4153251   -3.8128465   -1.6901242    15044.078     1.183515 
+   21000    1.4228834   -3.8235384   -1.6894801    15801.036    1.1831208 
+Loop time of 124.139 on 1 procs for 20000 steps with 8000 atoms
+
+Performance: 69599.547 tau/day, 161.110 timesteps/s
+99.2% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 75.901     | 75.901     | 75.901     |   0.0 | 61.14
+Neigh   | 41.924     | 41.924     | 41.924     |   0.0 | 33.77
+Comm    | 2.2653     | 2.2653     | 2.2653     |   0.0 |  1.82
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 2.9434     | 2.9434     | 2.9434     |   0.0 |  2.37
+Other   |            | 1.104      |            |       |  0.89
+
+Nlocal:    8000 ave 8000 max 8000 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7956 ave 7956 max 7956 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    222575 ave 222575 max 222575 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 222575
+Ave neighs/atom = 27.8219
+Neighbor list builds = 3537
+Dangerous builds = 0
+
+# thermal conductivity calculation
+# reset fix thermal/conductivity to zero energy accumulation
+
+fix		3 all thermal/conductivity 10 z 20
+
+fix             ave all ave/time 1 1 1000 v_tdiff ave running
+thermo_style	custom step temp epair etotal f_3 v_tdiff f_ave
+
+run		20000
+Memory usage per processor = 3.21556 Mbytes
+Step Temp E_pair TotEng f_3 v_tdiff f_ave 
+   21000    1.4228834   -3.8235384   -1.6894801            0    1.1831208    1.1831208 
+   22000    1.4103895   -3.8051515   -1.6898317    767.09609    1.1449997    1.1640603 
+   23000    1.4015868   -3.7915655   -1.6894481    1529.5101    1.2340082    1.1873762 
+   24000    1.4214662   -3.8212708   -1.6893381    2296.1553    1.1179804    1.1700273 
+   25000    1.4191923   -3.8178186   -1.6892962    3035.4116    1.2078026    1.1775824 
+   26000    1.4195227   -3.8191391   -1.6901212    3824.3534    1.1849531    1.1788108 
+   27000     1.396791    -3.784724   -1.6897994    4604.6464    1.2087342    1.1830856 
+   28000    1.4087165   -3.8028112   -1.6900006     5349.298    1.1389952    1.1775743 
+   29000    1.4183959   -3.8168436   -1.6895157    6121.3827    1.1651072     1.176189 
+   30000    1.4178951   -3.8166258    -1.690049    6901.0455    1.2807729    1.1866474 
+   31000    1.4198711   -3.8199817   -1.6904412    7639.4107    1.1991732    1.1877861 
+   32000    1.4165682   -3.8148577   -1.6902709    8406.7287    1.1807766     1.187202 
+   33000    1.4139305   -3.8109297    -1.690299    9167.8545    1.1271091    1.1825795 
+   34000    1.4123436   -3.8081745   -1.6899238    9924.7162    1.1815391    1.1825052 
+   35000    1.4316513   -3.8379718   -1.6907633    10696.567    1.2377476     1.186188 
+   36000    1.4025512   -3.7936307   -1.6900668    11455.769      1.20433    1.1873219 
+   37000    1.4173452   -3.8166715   -1.6909194    12201.117    1.1370901    1.1843671 
+   38000    1.4041648   -3.7962353   -1.6902514    12953.673    1.1936867    1.1848848 
+   39000    1.4259782   -3.8300363   -1.6913363     13705.64    1.1456261    1.1828186 
+   40000    1.4271183   -3.8317894   -1.6913796    14445.803    1.1781368    1.1825845 
+   41000      1.40928   -3.8037482   -1.6900924    15192.864     1.170545    1.1820112 
+Loop time of 127.118 on 1 procs for 20000 steps with 8000 atoms
+
+Performance: 67968.455 tau/day, 157.334 timesteps/s
+98.2% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 76.889     | 76.889     | 76.889     |   0.0 | 60.49
+Neigh   | 43.681     | 43.681     | 43.681     |   0.0 | 34.36
+Comm    | 2.1206     | 2.1206     | 2.1206     |   0.0 |  1.67
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 2.988      | 2.988      | 2.988      |   0.0 |  2.35
+Other   |            | 1.439      |            |       |  1.13
+
+Nlocal:    8000 ave 8000 max 8000 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    7993 ave 7993 max 7993 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    222666 ave 222666 max 222666 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 222666
+Ave neighs/atom = 27.8332
+Neighbor list builds = 3627
+Dangerous builds = 0
+Total wall time: 0:04:17
